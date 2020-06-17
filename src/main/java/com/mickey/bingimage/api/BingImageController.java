@@ -28,7 +28,7 @@ public class BingImageController {
     private String baseUrl = "http://www.bing.com";
     private String jsonUrl = baseUrl + "/HPImageArchive.aspx?format=js&idx=0&n=10";
     @Value("${image.folder}")
-    String folder;
+    private String folder;
 
     @GetMapping("")
     public JsonsRootBean getJson() throws IOException {
