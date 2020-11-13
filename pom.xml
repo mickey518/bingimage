@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.mickey</groupId>
     <artifactId>bingimage</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>bingimage</name>
     <description>bingimage job project for Spring Boot</description>
 
