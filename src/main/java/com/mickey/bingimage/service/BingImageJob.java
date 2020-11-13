@@ -7,8 +7,8 @@ import com.mickey.bingimage.dto.Image;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Slf4j
 public class BingImageJob implements Job {
-    @Autowired
+    @Resource
     private BingImageController controller;
 
     @Override

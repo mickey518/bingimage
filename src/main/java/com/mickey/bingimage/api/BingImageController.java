@@ -25,13 +25,13 @@ import java.util.List;
 @RequestMapping("/api/images")
 public class BingImageController {
 
-    private String baseUrl = "http://www.bing.com";
-    private String jsonUrl = baseUrl + "/HPImageArchive.aspx?format=js&idx=0&n=10";
+    private final String baseUrl = "http://www.bing.com";
     @Value("${image.folder}")
     private String folder;
 
     @GetMapping("")
     public JsonsRootBean getJson() throws IOException {
+        String jsonUrl = baseUrl + "/HPImageArchive.aspx?format=js&idx=0&n=10";
         HttpUtil.Response<JsonsRootBean> objectResponse = HttpUtil.get(jsonUrl, null, null);
         return JSON.parseObject(objectResponse.getResult(), JsonsRootBean.class);
     }
@@ -41,9 +41,15 @@ public class BingImageController {
         JsonsRootBean jsonsRootBean = getJson();
         List<Image> result = new ArrayList<>();
         if (jsonsRootBean != null && jsonsRootBean.getImages() != null && !jsonsRootBean.getImages().isEmpty()) {
+            if (!folder.endsWith(File.separator)) {
+                folder = folder + File.separator;
+            }
             jsonsRootBean.getImages().forEach(image -> {
-                File file = FileUtils.getFile(folder + image.getEnddate() + ".jpg");
+                String filePath = folder + image.getEnddate() + ".jpg";
+                System.out.println(filePath);
+                File file = FileUtils.getFile(filePath);
                 if (!file.exists()) {
+                    System.out.println("image not existed, downloading...");
                     result.add(image);
                     try {
                         HttpUtil.Response inputStream = HttpUtil.get4InputStream(baseUrl + image.getUrl(), null, null);
@@ -52,7 +58,6 @@ public class BingImageController {
                         exception.printStackTrace();
                     }
                 }
-                
             });
         }
         return result;

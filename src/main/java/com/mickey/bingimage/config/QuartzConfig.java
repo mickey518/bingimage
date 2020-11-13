@@ -25,18 +25,8 @@ public class QuartzConfig {
         SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
         schedulerFactoryBean.setJobFactory(jobFactory);
 //        schedulerFactoryBean.setQuartzProperties();
-        System.out.println("FLup Job Factory : " + jobFactory);
         return schedulerFactoryBean;
     }
-
-//    @Bean
-//    public Properties quartzProperties() throws IOException {
-//        PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
-//        propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
-//        //在quartz.properties中的属性被读取并注入后再初始化对象
-//        propertiesFactoryBean.afterPropertiesSet();
-//        return propertiesFactoryBean.getObject();
-//    }
 
     /**
      * quartz初始化监听器
