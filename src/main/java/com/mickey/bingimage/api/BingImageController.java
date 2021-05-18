@@ -1,6 +1,7 @@
 package com.mickey.bingimage.api;
 
 import com.alibaba.fastjson.JSON;
+import com.mickey.bingimage.common.HttpStatusEnum;
 import com.mickey.bingimage.common.HttpUtil;
 import com.mickey.bingimage.dto.Image;
 import com.mickey.bingimage.dto.JsonsRootBean;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * #Description
@@ -24,14 +27,29 @@ import java.util.List;
 @RequestMapping()
 public class BingImageController {
 	
-	private final String baseUrl = "http://www.bing.com";
+	private final String baseUrl = "https://www.bing.com";
 	@Value("${image.folder}")
 	private       String folder;
+	@Value("${version}")
+	private       String version;
+	
+	@GetMapping("/api/version")
+	public String getVersion() {
+		return this.version;
+	}
 	
 	@GetMapping("/api/images")
 	public JsonsRootBean getJson() throws IOException {
 		String jsonUrl = baseUrl + "/HPImageArchive.aspx?format=js&idx=0&n=10";
-		HttpUtil.Response<JsonsRootBean> objectResponse = HttpUtil.get(jsonUrl, null, null);
+		
+		Map<String, Object> headers = new HashMap<>();
+		headers.put("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36");
+		HttpUtil.Response<JsonsRootBean> objectResponse = HttpUtil.get(jsonUrl, null, headers);
+		
+		if (!objectResponse.getStatusCode().equals(HttpStatusEnum.OK)) {
+			System.out.println(String.format("%s request connection error, status code is : %s", jsonUrl, objectResponse.getStatusCode()));
+		}
+		
 		JsonsRootBean bean;
 		try {
 			bean = JSON.parseObject(objectResponse.getResult(), JsonsRootBean.class);
