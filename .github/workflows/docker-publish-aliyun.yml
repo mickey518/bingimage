@@ -1,4 +1,4 @@
-name: Docker-1.0
+name: Docker-aliyun
 
 on:
   push:
