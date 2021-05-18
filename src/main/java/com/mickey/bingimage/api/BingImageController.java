@@ -32,7 +32,14 @@ public class BingImageController {
 	public JsonsRootBean getJson() throws IOException {
 		String jsonUrl = baseUrl + "/HPImageArchive.aspx?format=js&idx=0&n=10";
 		HttpUtil.Response<JsonsRootBean> objectResponse = HttpUtil.get(jsonUrl, null, null);
-		return JSON.parseObject(objectResponse.getResult(), JsonsRootBean.class);
+		JsonsRootBean bean;
+		try {
+			bean = JSON.parseObject(objectResponse.getResult(), JsonsRootBean.class);
+		} catch (Exception e) {
+			System.out.println(objectResponse.getResult());
+			throw e;
+		}
+		return bean;
 	}
 	
 	@GetMapping(value = {"", "/api/images/auto"})
