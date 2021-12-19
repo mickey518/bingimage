@@ -1,1 +1,1 @@
-docker run --restart=always -d -p 1000:1000 -v /Users/wangmeng/OneDrive/pictures/BingImages/images:/usr/local/bing/images -v /Users/wangmeng/OneDrive/pictures/BingImages/logs/:/usr/local/bing/logs/ -m 200M --name bingimage bingimage:1.0
+docker run --restart=always -d -p 1000:1000 -v C:\\Users\\micke\\OneDrive\\pictures\\BingImages\\images:/usr/local/bing/images -v C:\\Users\\micke\\OneDrive\\pictures\\BingImages\\logs:/usr/local/bing/logs/ -m 200M --name bingimage bingimage:1.1
