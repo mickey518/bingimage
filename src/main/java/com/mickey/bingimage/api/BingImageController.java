@@ -5,12 +5,14 @@ import com.mickey.bingimage.common.HttpStatusEnum;
 import com.mickey.bingimage.common.HttpUtil;
 import com.mickey.bingimage.dto.Image;
 import com.mickey.bingimage.dto.JsonsRootBean;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import java.util.Map;
  *
  * @author wangmeng
  */
+@Slf4j
 @RestController
 @RequestMapping()
 public class BingImageController {
@@ -39,6 +42,16 @@ public class BingImageController {
         return this.version;
     }
 
+    @PostConstruct
+    private void init() {
+        try {
+            log.info("程序启动，自动调用拉取最新的壁纸代码！！！");
+            pullImages();
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
     @GetMapping("/api/images")
     public JsonsRootBean getJson() throws IOException {
         String jsonUrl = baseUrl + "/HPImageArchive.aspx?format=js&idx=0&n=10";
@@ -48,14 +61,14 @@ public class BingImageController {
         HttpUtil.Response<JsonsRootBean> objectResponse = HttpUtil.get(jsonUrl, null, headers);
 
         if (!objectResponse.getStatusCode().equals(HttpStatusEnum.OK)) {
-            System.out.println(String.format("%s request connection error, status code is : %s", jsonUrl, objectResponse.getStatusCode()));
+            log.error(String.format("%s request connection error, status code is : %s", jsonUrl, objectResponse.getStatusCode()));
         }
 
         JsonsRootBean bean;
         try {
             bean = JSON.parseObject(objectResponse.getResult(), JsonsRootBean.class);
         } catch (Exception e) {
-            System.out.println(objectResponse.getResult());
+            log.error(objectResponse.getResult());
             throw e;
         }
         return bean;
@@ -71,10 +84,10 @@ public class BingImageController {
             }
             jsonsRootBean.getImages().forEach(image -> {
                 String filePath = folder + image.getEnddate() + ".jpg";
-                System.out.println(filePath);
+                log.info(filePath);
                 File file = FileUtils.getFile(filePath);
                 if (!file.exists()) {
-                    System.out.println("image not existed, downloading...");
+                    log.info("image not existed, downloading...");
                     result.add(image);
                     try {
                         HttpUtil.Response inputStream = HttpUtil.get4InputStream(baseUrl + image.getUrl(), null, null);

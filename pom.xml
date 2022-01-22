@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.mickey</groupId>
     <artifactId>bingimage</artifactId>
-    <version>1.0.1</version>
+    <version>1.1</version>
     <name>bingimage</name>
     <description>bing image job project for Spring Boot</description>
 
@@ -61,6 +61,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
