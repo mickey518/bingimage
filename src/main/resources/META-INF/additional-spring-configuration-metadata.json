@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "image.folder",
+      "type": "java.lang.String",
+      "description": "Save path of the downloaded picture."
+    },
+    {
+      "name": "image.auto.cron",
+      "type": "java.lang.String",
+      "description": "Cron expression for downloading pictures regularly."
+    },
+    {
+      "name": "log.path",
+      "type": "java.lang.String",
+      "description": "log files's path."
+    },
+    {
+      "name": "version",
+      "type": "java.lang.String",
+      "description": "project version."
+    }
+  ]
+}

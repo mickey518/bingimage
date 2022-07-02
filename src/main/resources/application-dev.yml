@@ -1,0 +1,23 @@
+version: @project.version@
+server:
+  port: 8080
+spring:
+  profiles:
+    active: dev
+  application:
+    name: bing-image
+bing:
+  domain: https://www.bing.com
+image:
+  folder: ./images/
+  auto:
+    cron: 0 0 11 * * ?
+log:
+  path: ./logs/
+aliyun:
+  ddns:
+    region-id: cn-XXXXXXXXXX
+    access-key: XXXXXXXXXX
+    access-key.secret: XXXXXXXXXX
+    sub-domain-list: XXXXXXXXXX,XXXXXXXXXX
+    sub-domain-split-regex: ","
