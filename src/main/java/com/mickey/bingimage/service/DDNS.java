@@ -9,11 +9,15 @@ import com.aliyuncs.alidns.model.v20150109.UpdateDomainRecordResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.google.gson.Gson;
+import com.mickey.bingimage.common.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +26,9 @@ import java.util.regex.Pattern;
  * @author mickey wang
  */
 public class DDNS {
+    
+    private static final Logger logger = LoggerFactory.getLogger(DDNS.class);
+    
     /**
      * 获取主域名的所有解析记录列表
      */
@@ -103,13 +110,13 @@ public class DDNS {
         System.out.println(gson.toJson(result));
     }
 
-    public static String sync() {
+    public static String sync(String regionId, String accessKey, String accessKeySecret, List<String> subDomainList) {
         StringBuilder stringBuilder = new StringBuilder();
         // 设置鉴权参数，初始化客户端
         DefaultProfile profile = DefaultProfile.getProfile(
-                "cn-hangzhou",// 地域ID
-                "LTAI5tBqX9RXt5XRg4eWSXrX",// 您的AccessKey ID
-                "ygScEVY6y5SOVyZK5HcDdIKHRQP479");// 您的AccessKey Secret
+                regionId,// 地域ID
+                accessKey,// 您的AccessKey ID
+                accessKeySecret);// 您的AccessKey Secret
         IAcsClient client = new DefaultAcsClient(profile);
 
         DDNS ddns = new DDNS();
@@ -123,19 +130,18 @@ public class DDNS {
         // 解析记录类型
         describeDomainRecordsRequest.setType("A");
         DescribeDomainRecordsResponse describeDomainRecordsResponse = ddns.describeDomainRecords(describeDomainRecordsRequest, client);
-        log_print("describeDomainRecords", describeDomainRecordsResponse);
         stringBuilder.append("-------------------------------describeDomainRecords-------------------------------");
-        stringBuilder.append(new Gson().toJson(describeDomainRecordsResponse));
+        stringBuilder.append(JsonUtils.encodePrettyJson(describeDomainRecordsResponse));
 
         List<DescribeDomainRecordsResponse.Record> domainRecords = describeDomainRecordsResponse.getDomainRecords();
         // 最新的一条解析记录
-        if (domainRecords.size() != 0) {
+        if (domainRecords.size() > 0) {
             // 当前主机公网IP
             String currentHostIP = ddns.getCurrentHostIP();
             stringBuilder.append("-------------------------------当前主机公网IP为：" + currentHostIP + "-------------------------------");
-
+            logger.info(stringBuilder.toString());
             for (DescribeDomainRecordsResponse.Record domainRecord : domainRecords) {
-                if (!currentHostIP.equals(domainRecord.getValue())) {
+                if (!currentHostIP.equals(domainRecord.getValue()) && subDomainList.contains(domainRecord.getRR())) {
                     // 修改解析记录
                     UpdateDomainRecordRequest updateDomainRecordRequest = new UpdateDomainRecordRequest();
                     // 主机记录
@@ -157,6 +163,6 @@ public class DDNS {
     }
 
     public static void main(String[] args) {
-        sync();
+        sync("cn-hangzhou", "LTAI5tBqX9RXt5XRg4eWSXrX", "ygScEVY6y5SOVyZK5HcDdIKHRQP479", Arrays.asList("seafile", "bingimage"));
     }
 }
