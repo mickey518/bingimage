@@ -1,6 +1,7 @@
 package com.mickey.bingimage.api;
 
 import com.mickey.bingimage.service.BingImageJob;
+import com.mickey.bingimage.service.DDNSJob;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,22 @@ public class JobController {
                 .withIdentity(jobName, groupName)
                 .withSchedule(scheduleBuilder).build();
         Date date = scheduler.scheduleJob(jobDetail, trigger);
+
+        log.info(String.format("%s next run time is %tc", jobName, date));
+
+        jobName = "sync";
+        groupName = "DDNS";
+
+        scheduler.start();
+        jobDetail = JobBuilder.newJob(DDNSJob.class)
+                .withIdentity(jobName, groupName)
+                .withDescription("sync ddns each 5 minutes")
+                .build();
+        scheduleBuilder = CronScheduleBuilder.cronSchedule("0 0/5 * * * ? ");
+        trigger = TriggerBuilder.newTrigger()
+                .withIdentity(jobName, groupName)
+                .withSchedule(scheduleBuilder).build();
+        date = scheduler.scheduleJob(jobDetail, trigger);
 
         log.info(String.format("%s next run time is %tc", jobName, date));
     }
