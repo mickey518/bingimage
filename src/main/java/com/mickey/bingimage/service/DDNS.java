@@ -140,6 +140,7 @@ public class DDNS {
             String currentHostIP = ddns.getCurrentHostIP();
             stringBuilder.append("-------------------------------当前主机公网IP为：" + currentHostIP + "-------------------------------");
             logger.info(stringBuilder.toString());
+            logger.info("需要更新IP的子域名有：{}", JsonUtils.encodePrettyJson(subDomainList));
             for (DescribeDomainRecordsResponse.Record domainRecord : domainRecords) {
                 if (!currentHostIP.equals(domainRecord.getValue()) && subDomainList.contains(domainRecord.getRR())) {
                     // 修改解析记录
@@ -160,9 +161,5 @@ public class DDNS {
             }
         }
         return stringBuilder.toString();
-    }
-
-    public static void main(String[] args) {
-        sync("cn-hangzhou", "LTAI5tBqX9RXt5XRg4eWSXrX", "ygScEVY6y5SOVyZK5HcDdIKHRQP479", Arrays.asList("seafile", "bingimage"));
     }
 }
