@@ -1,6 +1,7 @@
 package com.mickey.bingimage.api;
 
 import com.aliyuncs.utils.StringUtils;
+import com.mickey.bingimage.common.JsonUtils;
 import com.mickey.bingimage.service.DDNS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +47,7 @@ public class DDNSController {
         List<String> subDomains = new ArrayList<>();
         if (!StringUtils.isEmpty(subDomainString)) {
             String[] strings = subDomainString.split(subDomainSplitRegex);
+            log.info("需要更新IP的子域名有：{}", JsonUtils.encodePrettyJson(strings));
             subDomains = Arrays.stream(strings).collect(Collectors.toList());
         }
         return DDNS.sync(regionId, accessKey, accessKeySecret, subDomains);

@@ -125,8 +125,6 @@ public class DDNS {
         DescribeDomainRecordsRequest describeDomainRecordsRequest = new DescribeDomainRecordsRequest();
         // 主域名
         describeDomainRecordsRequest.setDomainName("mickey.wang");
-        // 主机记录
-//        describeDomainRecordsRequest.setRRKeyWord("ddnstest");
         // 解析记录类型
         describeDomainRecordsRequest.setType("A");
         DescribeDomainRecordsResponse describeDomainRecordsResponse = ddns.describeDomainRecords(describeDomainRecordsRequest, client);
@@ -135,12 +133,11 @@ public class DDNS {
 
         List<DescribeDomainRecordsResponse.Record> domainRecords = describeDomainRecordsResponse.getDomainRecords();
         // 最新的一条解析记录
-        if (domainRecords.size() > 0) {
+        if (!domainRecords.isEmpty()) {
             // 当前主机公网IP
             String currentHostIP = ddns.getCurrentHostIP();
-            stringBuilder.append("-------------------------------当前主机公网IP为：" + currentHostIP + "-------------------------------");
+            stringBuilder.append("\n----当前主机公网IP为：").append(currentHostIP).append("-------------------------------");
             logger.info(stringBuilder.toString());
-            logger.info("需要更新IP的子域名有：{}", JsonUtils.encodePrettyJson(subDomainList));
             for (DescribeDomainRecordsResponse.Record domainRecord : domainRecords) {
                 if (!currentHostIP.equals(domainRecord.getValue()) && subDomainList.contains(domainRecord.getRR())) {
                     // 修改解析记录
